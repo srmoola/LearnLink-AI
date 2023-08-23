@@ -16,7 +16,7 @@ interface StateItem {
   output: string;
 }
 
-const page = ({ params }: any) => {
+const Page = ({ params }: any) => {
   const id: string = params.id;
   const url: string = `https://firebasestorage.googleapis.com/v0/b/learnlink-87932.appspot.com/o/pdfs%2F${id}?alt=media&token=https://firebasestorage.googleapis.com/v0/b/learnlink-87932.appspot.com/o/pdfs%2Fc0f8ae99-7d2a-42d4-9a30-80faa747deaaSatyadevMoolagani.pdf?alt=media&token=ca72859e-d6a3-401e-9fe9-f900ac986782`;
   const [language, setlanguage] = useState<string>("English");
@@ -146,4 +146,4 @@ const page = ({ params }: any) => {
   );
 };
 
-export default page;
+export default Page;
