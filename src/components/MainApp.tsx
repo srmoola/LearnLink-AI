@@ -1,25 +1,52 @@
 "use client";
+import { firestore } from "@/firebase";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import PdfCard from "./PdfCard";
+import { Grid } from "@mui/material";
+
+const documents = collection(firestore, "pdfs");
 
 const MainApp = () => {
-  const [prediction, setPrediction] = useState("");
+  const [pdffiles, setpdffiles] = useState<any[]>([]);
+  const [isLoaded, setisLoaded] = useState(false);
+
+  console.log(pdffiles);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("/api/prediction");
-        const data = await response.text();
-        // const formattedPrediction = data.replace("\n", "<br>");
-        setPrediction(data);
-      } catch (error) {
-        console.error("Error fetching prediction:", error);
-      }
-    }
+    const q = query(documents, orderBy("timestamp", "desc"));
+    const getUsers = onSnapshot(q, (doc) => {
+      let allDocs: any[] = [];
+      doc.docs.forEach((doc) => {
+        allDocs.push({ ...doc.data(), id: doc.id });
+      });
+      setpdffiles(allDocs);
+    });
 
-    fetchData();
-  }, []);
+    setTimeout(() => {
+      setisLoaded(true);
+    }, 2000);
 
-  return <div className="text-black">{prediction}</div>;
+    return () => getUsers(); // Cleanup the listener when component unmounts
+  }, []); // Run the effect only once on component mount
+
+  return (
+    <>
+      <Grid container spacing={1}>
+        {pdffiles.map((doc) => {
+          return (
+            <Grid key={doc.id} item xs={12} md={4} lg={3} xl={3}>
+              <PdfCard
+                pdfurl={doc.pdfpath}
+                docname={doc.pdfname}
+                pdf={doc.pdf}
+              />
+            </Grid>
+          );
+        })}
+      </Grid>
+    </>
+  );
 };
 
 export default MainApp;

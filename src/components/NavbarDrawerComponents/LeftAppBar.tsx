@@ -23,13 +23,15 @@ const LeftAppBar = ({ open, handleDrawerOpen }: Props) => {
       </IconButton>
       {!open && (
         <>
-          <img
-            alt="EduTube Logo"
-            src="/learnlink.png"
-            width={165}
-            height={165}
-            className="mt-2"
-          />
+          <a href="/">
+            <img
+              alt="EduTube Logo"
+              src="/learnlink.png"
+              width={165}
+              height={165}
+              className="mt-2"
+            />
+          </a>
         </>
       )}
     </>

@@ -11,8 +11,7 @@ import SeachwithVoice from "./NavbarDrawerComponents/SeachwithVoice";
 import CreateVideo from "./NavbarDrawerComponents/CreateVideo";
 import Notifications from "./NavbarDrawerComponents/Notifications";
 import AvatarBox from "./NavbarDrawerComponents/AvatarBox";
-import OpenBarList from "./NavbarDrawerComponents/OpenBarList";
-import ClosedBarList from "./NavbarDrawerComponents/ClosedBarList";
+
 import CustomDivider from "./NavbarDrawerComponents/CustomDivider";
 import MainOpenList from "./NavbarDrawerComponents/MainOpenList";
 import LeftAppBar from "./NavbarDrawerComponents/LeftAppBar";
@@ -149,12 +148,6 @@ export default function NavbarDrawer({ children }: Props) {
         <MainOpenList open={open} iconColor={iconColor} />
 
         <CustomDivider open={open} />
-
-        <ClosedBarList open={open} iconColor={iconColor} />
-
-        <CustomDivider open={open} />
-
-        {open && <OpenBarList open={open} iconColor={iconColor} />}
       </Drawer>
 
       <Box

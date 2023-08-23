@@ -13,13 +13,9 @@ const AvatarBox = () => {
     <Button
       className="ml-4"
       sx={{
-        borderColor: "#303030",
+        borderColor: "#5064a8",
         borderRadius: 25,
-        color: "#378ad1",
-        "&:hover": {
-          borderColor: "#15be97",
-          color: "#15be97",
-        },
+        color: "#5064a8",
         whiteSpace: "nowrap",
         textOverflow: "ellipsis", // Add this line to truncate the text with "..."
         overflow: "hidden", // Add this line to hide any overflowing content

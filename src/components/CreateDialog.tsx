@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,117 +6,15 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Paper, { PaperProps } from "@mui/material/Paper";
 import CustomDivider from "./NavbarDrawerComponents/CustomDivider";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Avatar, Box, IconButton, Tooltip, Typography } from "@mui/material";
+import { Avatar, IconButton, Tooltip, Typography } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
-import CrTextFields from "./CreateVideoComponents/CrTextFields";
-import CrPreviewInfo from "./CreateVideoComponents/CrPreviewInfo";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import "./CreateVideoComponents/video.css";
-import { storage } from "../firebase";
+import { auth, firestore, storage } from "../firebase";
 import { ref, uploadBytes } from "firebase/storage";
+import { useRouter } from "next/navigation";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
-function UploadedComponent({ fileUpload }: any) {
-  const videoRef: any = useRef(null);
-  const [videoDuration, setVideoDuration] = useState(0);
-  const [imageUpload, setimageUpload] = useState<any>(null);
-
-  console.log(imageUpload);
-
-  const handleImageUpload = () => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/png, image/jpeg";
-    fileInput.onchange = (e: any) => {
-      if (e.target && e.target.files) {
-        setimageUpload(e.target.files[0]);
-      }
-    };
-    fileInput.click();
-  };
-
-  const handleVideoLoaded = () => {
-    if (videoRef.current) {
-      setVideoDuration(videoRef.current.duration);
-    }
-  };
-
-  const formatDuration = (duration: number) => {
-    const minutes = Math.floor(duration / 60);
-    const seconds = Math.floor(duration % 60);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
-
-  const handleImageShow = () => {
-    if (!imageUpload) {
-      return;
-    }
-
-    try {
-      return URL.createObjectURL(imageUpload);
-    } catch {
-      return;
-    }
-  };
-
-  const handleConfirmUpload = async () => {
-    const fileRef = ref(
-      storage,
-      `videos/${crypto.randomUUID() + fileUpload.name}`
-    );
-    const videoUrl = await uploadBytes(fileRef, fileUpload);
-
-    console.log(
-      `https://firebasestorage.googleapis.com/v0/b/${videoUrl.metadata.bucket}/o/videos%2F${videoUrl.metadata.name}?alt=media&token=e4e0728e-e681-4525-a26d-b2728700b352`
-    );
-    console.log(videoUrl);
-  };
-
-  return (
-    <Box className="flex justify-center gap-5">
-      <Box className="w-1/2 h-96 overflow-y-scroll custom-scrollbar p-2">
-        <CrTextFields fileUpload={fileUpload} />
-        <Typography className="text-white text-xl mt-5 ">Thumbnail</Typography>
-        <Box
-          onClick={handleImageUpload}
-          sx={{
-            borderStyle: "dashed",
-            borderWidth: 2,
-            borderColor: "#3e3e3e",
-            "&:hover": { borderColor: "#f0f0f0" },
-            bgcolor: "#282828",
-            transition: "0.5s ease",
-          }}
-          className="mt-1 h-36 rounded-xl cursor-pointer grid place-items-center"
-        >
-          <IconButton onClick={handleImageUpload}>
-            <Avatar sx={{ width: 75, height: 75, bgcolor: "#1f1f1f" }}>
-              <AddPhotoAlternateIcon
-                sx={{ width: 50, height: 50, color: "#909090" }}
-              />
-            </Avatar>
-          </IconButton>
-        </Box>
-      </Box>
-      <Box style={{ backgroundColor: "#1f1f1f" }} className="w-1/2 h-full">
-        <video
-          poster={handleImageShow()}
-          ref={videoRef}
-          onLoadedMetadata={handleVideoLoaded}
-          className="cursor-pointer"
-          src={URL.createObjectURL(fileUpload)}
-          controls
-        />
-        <CrPreviewInfo
-          fileUpload={fileUpload}
-          duration={formatDuration(Number(videoDuration.toFixed(0)))}
-        />
-        <Button onClick={handleConfirmUpload} fullWidth className="mt-5">
-          Confirm Upload
-        </Button>
-      </Box>
-    </Box>
-  );
-}
+const pdflist = collection(firestore, "pdfs");
 
 function PaperComponent(props: PaperProps) {
   return (
@@ -131,17 +29,46 @@ type Props = {
 
 export default function CreateDialog({ open, handleClose }: Props) {
   const [fileUpload, setfileUpload] = useState<any>(null);
+  const { push } = useRouter();
 
   const handleFileUpload = () => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
-    fileInput.accept = "video/mp4";
+    fileInput.accept = ".pdf";
     fileInput.onchange = (e: any) => {
       if (e.target && e.target.files) {
         setfileUpload(e.target.files[0]);
       }
     };
     fileInput.click();
+  };
+
+  const handleConfirmUpload = async () => {
+    // push("/hello-nextjs");
+    const filepath = crypto.randomUUID() + fileUpload.name.replace(/\s+/g, "");
+    const fileRef = ref(storage, `pdfs/${filepath}`);
+    const videoUrl = await uploadBytes(fileRef, fileUpload);
+
+    const uploader = auth.currentUser?.displayName
+      ? auth.currentUser
+      : "Anonymous";
+
+    const photo = auth.currentUser?.photoURL
+      ? auth.currentUser
+      : "https://images.nightcafe.studio//assets/profile.png?tr=w-1600,c-at_max";
+
+    const url: string = `https://firebasestorage.googleapis.com/v0/b/learnlink-87932.appspot.com/o/pdfs%2F${videoUrl.metadata.name}?alt=media&token=https://firebasestorage.googleapis.com/v0/b/learnlink-87932.appspot.com/o/pdfs%2Fc0f8ae99-7d2a-42d4-9a30-80faa747deaaSatyadevMoolagani.pdf?alt=media&token=ca72859e-d6a3-401e-9fe9-f900ac986782`;
+
+    await addDoc(pdflist, {
+      pdfname: fileUpload.name.split(".")[0],
+      uploader: uploader,
+      photo: photo,
+      pdfpath: url,
+      pdf: videoUrl.metadata.name,
+      timestamp: serverTimestamp(),
+    });
+
+    push("/pdf/" + videoUrl.metadata.name);
   };
 
   return (
@@ -156,7 +83,7 @@ export default function CreateDialog({ open, handleClose }: Props) {
         className="flex justify-between text-white"
         id="draggable-dialog-title"
       >
-        Upload Video
+        Create Link Document
         <Tooltip title="Close">
           <IconButton
             onClick={() => {
@@ -170,25 +97,28 @@ export default function CreateDialog({ open, handleClose }: Props) {
       </DialogTitle>
       <CustomDivider open={open} />
       <DialogContent className="grid place-items-center">
+        <Tooltip title={fileUpload ? "Upload Different File" : "Upload File"}>
+          <IconButton onClick={handleFileUpload}>
+            <Avatar sx={{ width: 150, height: 150, bgcolor: "#1f1f1f" }}>
+              <UploadIcon sx={{ width: 75, height: 75, color: "#909090" }} />
+            </Avatar>
+          </IconButton>
+        </Tooltip>
         {fileUpload ? (
-          <UploadedComponent fileUpload={fileUpload} />
-        ) : (
           <>
-            <IconButton onClick={handleFileUpload}>
-              <Avatar sx={{ width: 150, height: 150, bgcolor: "#1f1f1f" }}>
-                <UploadIcon sx={{ width: 75, height: 75, color: "#909090" }} />
-              </Avatar>
-            </IconButton>
+            <Typography variant="h6" sx={{ color: "white" }}>
+              Creating Link to: {fileUpload.name}
+            </Typography>
             <Button
               variant="contained"
-              className="mb-auto mt-1"
+              className="mb-auto"
               style={{ backgroundColor: "#3da6ff", color: "#0e0f10" }}
-              onClick={handleFileUpload}
+              onClick={handleConfirmUpload}
             >
-              Select File
+              Confirm Link
             </Button>
           </>
-        )}
+        ) : null}
       </DialogContent>
     </Dialog>
   );

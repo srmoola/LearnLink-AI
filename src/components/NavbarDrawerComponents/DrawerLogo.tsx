@@ -15,13 +15,15 @@ const DrawerLogo = ({ handleDrawerClose }: Props) => {
       >
         <MenuIcon />
       </IconButton>
-      <img
-        className="mt-2"
-        alt="EduTube Logo"
-        src="/learnlink.png"
-        width={165}
-        height={165}
-      />
+      <a href="/">
+        <img
+          className="mt-2"
+          alt="EduTube Logo"
+          src="/learnlink.png"
+          width={165}
+          height={165}
+        />
+      </a>
     </>
   );
 };

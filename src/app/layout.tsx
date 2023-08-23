@@ -5,8 +5,8 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LearnLink AI",
-  description: "Talk with your text books with LearnLink AI",
+  title: "LearnLink",
+  description: "Created by Satyadev Moolagani at Skyline Web Studio",
 };
 
 export default function RootLayout({
@@ -16,6 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+          rel="stylesheet"
+        />
+        <link rel="icon" type="image/x-icon" href="/learnlinkicon.png" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );
