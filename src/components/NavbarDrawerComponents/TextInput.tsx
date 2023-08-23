@@ -7,10 +7,20 @@ import { useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Tooltip } from "@mui/material";
 
-export default function TextInput() {
+type Props = {
+  pdffiles: any[];
+  setpdffiles: React.Dispatch<React.SetStateAction<any[]>>;
+};
+
+export default function TextInput({ pdffiles, setpdffiles }: Props) {
   const [borderColor, setborderColor] = useState<string>("#222222");
   const [seachText, setseachText] = useState<string>("");
   const [focused, setfocused] = useState<boolean>(false);
+
+  const handleFilter = (event: { target: { value: any } }) => {
+    const searchWord = event.target.value.toLowerCase();
+    setseachText(searchWord);
+  };
 
   return (
     <Paper
@@ -51,7 +61,7 @@ export default function TextInput() {
           setborderColor("#222222");
           setfocused(false);
         }}
-        onChange={(e) => setseachText(e.target.value)}
+        onChange={handleFilter}
         value={seachText}
         placeholder="Search LearnLink"
         inputProps={{ "aria-label": "search google maps" }}

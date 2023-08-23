@@ -4,6 +4,7 @@ import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import PdfCard from "./PdfCard";
 import { Grid } from "@mui/material";
+import CardLoader from "./CardLoader";
 
 const documents = collection(firestore, "pdfs");
 
@@ -36,11 +37,15 @@ const MainApp = () => {
         {pdffiles.map((doc) => {
           return (
             <Grid key={doc.id} item xs={12} md={4} lg={3} xl={3}>
-              <PdfCard
-                pdfurl={doc.pdfpath}
-                docname={doc.pdfname}
-                pdf={doc.pdf}
-              />
+              {isLoaded ? (
+                <PdfCard
+                  pdfurl={doc.pdfpath}
+                  docname={doc.pdfname}
+                  pdf={doc.pdf}
+                />
+              ) : (
+                <CardLoader />
+              )}
             </Grid>
           );
         })}

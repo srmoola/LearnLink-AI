@@ -11,7 +11,6 @@ import SeachwithVoice from "./NavbarDrawerComponents/SeachwithVoice";
 import CreateVideo from "./NavbarDrawerComponents/CreateVideo";
 import Notifications from "./NavbarDrawerComponents/Notifications";
 import AvatarBox from "./NavbarDrawerComponents/AvatarBox";
-
 import CustomDivider from "./NavbarDrawerComponents/CustomDivider";
 import MainOpenList from "./NavbarDrawerComponents/MainOpenList";
 import LeftAppBar from "./NavbarDrawerComponents/LeftAppBar";
@@ -99,9 +98,15 @@ const Drawer = styled(MuiDrawer, {
 
 type Props = {
   children: any;
+  pdffiles?: any[];
+  setpdffiles?: React.Dispatch<React.SetStateAction<any[]>> | null;
 };
 
-export default function NavbarDrawer({ children }: Props) {
+export default function NavbarDrawer({
+  children,
+  pdffiles,
+  setpdffiles,
+}: Props) {
   const [open, setOpen] = useState(false);
   const [isLoading, setisLoading] = useState(true);
 
@@ -126,7 +131,10 @@ export default function NavbarDrawer({ children }: Props) {
         <Toolbar>
           <LeftAppBar open={open} handleDrawerOpen={handleDrawerOpen} />
 
-          <TextInput />
+          <TextInput
+            pdffiles={pdffiles || []}
+            setpdffiles={setpdffiles || Boolean}
+          />
 
           <SeachwithVoice />
 

@@ -33,9 +33,9 @@ export default function PdfCard({ pdfurl, docname, pdf }: Props) {
 
   return (
     <Card sx={{ maxWidth: 345 }}>
-      <embed src={pdfurl} width="100%" height="200" type="application/pdf" />
+      <embed src={pdfurl} width="100%" height="100%" type="application/pdf" />
       <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography gutterBottom variant="h6" noWrap>
           {docname}
         </Typography>
       </CardContent>

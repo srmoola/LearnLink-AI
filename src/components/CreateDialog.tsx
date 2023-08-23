@@ -13,6 +13,7 @@ import { auth, firestore, storage } from "../firebase";
 import { ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const pdflist = collection(firestore, "pdfs");
 
@@ -29,6 +30,7 @@ type Props = {
 
 export default function CreateDialog({ open, handleClose }: Props) {
   const [fileUpload, setfileUpload] = useState<any>(null);
+  const [isLoading, setisLoading] = useState(false);
   const { push } = useRouter();
 
   const handleFileUpload = () => {
@@ -44,7 +46,7 @@ export default function CreateDialog({ open, handleClose }: Props) {
   };
 
   const handleConfirmUpload = async () => {
-    // push("/hello-nextjs");
+    setisLoading(true);
     const filepath = crypto.randomUUID() + fileUpload.name.replace(/\s+/g, "");
     const fileRef = ref(storage, `pdfs/${filepath}`);
     const videoUrl = await uploadBytes(fileRef, fileUpload);
@@ -67,7 +69,7 @@ export default function CreateDialog({ open, handleClose }: Props) {
       pdf: videoUrl.metadata.name,
       timestamp: serverTimestamp(),
     });
-
+    setisLoading(false);
     push("/pdf/" + videoUrl.metadata.name);
   };
 
@@ -115,7 +117,7 @@ export default function CreateDialog({ open, handleClose }: Props) {
               style={{ backgroundColor: "#3da6ff", color: "#0e0f10" }}
               onClick={handleConfirmUpload}
             >
-              Confirm Link
+              {isLoading ? <CircularProgress /> : "Confirm Link"}
             </Button>
           </>
         ) : null}
