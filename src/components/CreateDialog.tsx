@@ -51,20 +51,10 @@ export default function CreateDialog({ open, handleClose }: Props) {
     const fileRef = ref(storage, `pdfs/${filepath}`);
     const videoUrl = await uploadBytes(fileRef, fileUpload);
 
-    const uploader = auth.currentUser?.displayName
-      ? auth.currentUser
-      : "Anonymous";
-
-    const photo = auth.currentUser?.photoURL
-      ? auth.currentUser
-      : "https://images.nightcafe.studio//assets/profile.png?tr=w-1600,c-at_max";
-
     const url: string = `https://firebasestorage.googleapis.com/v0/b/learnlink-87932.appspot.com/o/pdfs%2F${videoUrl.metadata.name}?alt=media&token=https://firebasestorage.googleapis.com/v0/b/learnlink-87932.appspot.com/o/pdfs%2Fc0f8ae99-7d2a-42d4-9a30-80faa747deaaSatyadevMoolagani.pdf?alt=media&token=ca72859e-d6a3-401e-9fe9-f900ac986782`;
 
     await addDoc(pdflist, {
       pdfname: fileUpload.name.split(".")[0],
-      uploader: uploader,
-      photo: photo,
       pdfpath: url,
       pdf: videoUrl.metadata.name,
       timestamp: serverTimestamp(),
