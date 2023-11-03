@@ -50,6 +50,7 @@ function Media(props: MediaProps) {
             />
           </>
         }
+        //
         subheader={<Skeleton animation="wave" height={20} width="40%" />}
       />
     </Card>
