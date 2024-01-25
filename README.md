@@ -1,7 +1,7 @@
 # LearnLink AI
 ## Press on Image for Video Demo
 
-[![Video Demo](https://i3.ytimg.com/vi/zHlUo1YgZFQ/maxresdefault.jpg)]([https://www.youtube.com/watch?v=qiRC0G4WhDQ](https://www.youtube.com/watch?v=zHlUo1YgZFQ))
+[![Video Demo](https://i3.ytimg.com/vi/zHlUo1YgZFQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=zHlUo1YgZFQ)
 
 - <a target = "_blank" href="https://www.youtube.com/watch?v=zHlUo1YgZFQ">LearnLink AI Video Demonstration can be found here</a>
 - <a target = "_blank" href="https://learnlinkai.vercel.app/">LearnLink AI Live Website Demo can be found here</a>
