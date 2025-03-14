@@ -1,56 +1,58 @@
 "use client";
-import { firestore } from "@/firebase";
+import { firestore, Timestamp } from "@/firebase";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import PdfCard from "./PdfCard";
 import { Grid } from "@mui/material";
 import CardLoader from "./CardLoader";
 
-const documents = collection(firestore, "pdfs");
+type PdfDocument = {
+  id: string;
+  pdfpath: string;
+  pdfname: string;
+  pdf: string;
+  timestamp?: Timestamp;
+};
+
+const pdfCollection = collection(firestore, "pdfs");
 
 const MainApp = () => {
-  const [pdffiles, setpdffiles] = useState<any[]>([]);
-  const [isLoaded, setisLoaded] = useState(false);
-
-  console.log(pdffiles);
+  const [pdfList, setPdfList] = useState<PdfDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const q = query(documents, orderBy("timestamp", "desc"));
-    const getUsers = onSnapshot(q, (doc) => {
-      let allDocs: any[] = [];
-      doc.docs.forEach((doc) => {
-        allDocs.push({ ...doc.data(), id: doc.id });
-      });
-      setpdffiles(allDocs);
+    const pdfQuery = query(pdfCollection, orderBy("timestamp", "desc"));
+    const unsubscribe = onSnapshot(pdfQuery, (snapshot) => {
+      const documents: PdfDocument[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as PdfDocument[];
+      setPdfList(documents);
     });
 
     setTimeout(() => {
-      setisLoaded(true);
+      setIsLoading(true);
     }, 2000);
 
-    return () => getUsers(); // Cleanup the listener when component unmounts
-  }, []); // Run the effect only once on component mount
+    return () => unsubscribe(); // Cleanup listener on unmount
+  }, []);
 
   return (
-    <>
-      <Grid container spacing={1}>
-        {pdffiles.map((doc) => {
-          return (
-            <Grid key={doc.id} item xs={12} md={4} lg={3} xl={3}>
-              {isLoaded ? (
-                <PdfCard
-                  pdfurl={doc.pdfpath}
-                  docname={doc.pdfname}
-                  pdf={doc.pdf}
-                />
-              ) : (
-                <CardLoader />
-              )}
-            </Grid>
-          );
-        })}
-      </Grid>
-    </>
+    <Grid container spacing={1}>
+      {pdfList.map((pdfDoc) => (
+        <Grid key={pdfDoc.id} item xs={12} md={4} lg={3} xl={3}>
+          {isLoading ? (
+            <PdfCard
+              pdfurl={pdfDoc.pdfpath}
+              docname={pdfDoc.pdfname}
+              pdf={pdfDoc.pdf}
+            />
+          ) : (
+            <CardLoader />
+          )}
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 
